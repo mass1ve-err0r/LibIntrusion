@@ -21,3 +21,7 @@ void LIHookMessage(Class targetClass, SEL targetSelector, IMP replacement, IMP* 
     */
     *orig = method_setImplementation(origMethod, replacement);
 }
+
+void LIHookIvar(Class targetClass, const char *targetIvarName, void *replacement) {
+    object_setInstanceVariable(targetClass, targetIvarName, replacement);
+}
