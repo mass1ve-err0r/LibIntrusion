@@ -1,3 +1,8 @@
+/*
+ * LibIntrusion - A hooking library for x86_64 macOS.
+ * Having fun with the runtime |
+ */
+
 #include "LibIntrusion.h"
 
 /**
@@ -22,6 +27,21 @@ void LIHookMessage(Class targetClass, SEL targetSelector, IMP replacement, IMP* 
     *orig = method_setImplementation(origMethod, replacement);
 }
 
+/**
+ * This should be analogous to "MSHookIvar", although iirc MS gets back the Ivar's value.
+ * That could be added later/ revamped.
+ */
 void LIHookIvar(Class targetClass, const char *targetIvarName, void *replacement) {
     object_setInstanceVariable(targetClass, targetIvarName, replacement);
+}
+
+/**
+ * Not sure if MS has something like this (perhaps with MSClassPair?), but I figured this would be dope to have!
+ * You don't need to get the protoype c-string, LIInjectMethod does it for you!
+ */
+void LIInjectMethod(Class targetClass, SEL selectorName, IMP injectableFunc) {
+    Method tramp = NULL;
+    method_setImplementation(tramp, injectableFunc);
+    const char *IMPproto = method_getTypeEncoding(tramp);
+    class_addMethod(targetClass, selectorName, injectableFunc, IMPproto);
 }
