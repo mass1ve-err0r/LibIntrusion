@@ -3,10 +3,12 @@
 
 #include <stdio.h>
 #include <objc/runtime.h>
-#define LIInitialize __attribute__((constructor)) static void ctor()
+#include <CoreFoundation/CoreFoundation.h>
+#define LIInitialize __attribute__((constructor)) static void _LIInitialize()
 
-void LIHookIvar(Class targetClass, const char *targetIvarName, void *replacement);
+void LIHookIvar(const char * targetClass, const char *targetIvarName, void *replacement);
 void LIHookMessage(Class targetClass, SEL targetSelector, IMP replacement, IMP* orig);
-void LIInjectMethod(Class targetClass, SEL selectorName, IMP injectableFunc);
+void LIInjectMethod(BOOL intoClass, const char* className, const char* selectorName, IMP func);
+void LIInvoke(Class targetClass, SEL targetSelector);
 
 #endif //LIBINTRUSION_LIBINTRUSION_H

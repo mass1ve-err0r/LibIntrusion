@@ -7,9 +7,9 @@
 
 /**
  * This is somewhat analogous to Substrate's "MSHookMessageEx".
- * It doesn't have the same "Magic" as Substrate if multipe dylibs injected target the same message
+ * It doesn't have the same "Magic" as Substrate if multipe dylibs injected target the same message.
  *
- * Will figure that out eventually, perhaps thats a job for the injector to take care of.
+ * Will figure that out eventually, perhaps that's a job for the injector to take care of.
  */
 void LIHookMessage(Class targetClass, SEL targetSelector, IMP replacement, IMP* orig) {
     Method origMethod;
@@ -31,17 +31,24 @@ void LIHookMessage(Class targetClass, SEL targetSelector, IMP replacement, IMP* 
  * This should be analogous to "MSHookIvar", although iirc MS gets back the Ivar's value.
  * That could be added later/ revamped.
  */
-void LIHookIvar(Class targetClass, const char *targetIvarName, void *replacement) {
-    object_setInstanceVariable(targetClass, targetIvarName, replacement);
+void LIHookIvar(const char * targetClass, const char *targetIvarName, void *replacement) {
+    //TODO: this needs to be reworked since the old method works ONLY if you inject alongside
 }
 
 /**
  * Not sure if MS has something like this (perhaps with MSClassPair?), but I figured this would be dope to have!
  * You don't need to get the protoype c-string, LIInjectMethod does it for you!
  */
-void LIInjectMethod(Class targetClass, SEL selectorName, IMP injectableFunc) {
-    Method tramp = NULL;
-    method_setImplementation(tramp, injectableFunc);
-    const char *IMPproto = method_getTypeEncoding(tramp);
-    class_addMethod(targetClass, selectorName, injectableFunc, IMPproto);
+void LIInjectMethod(BOOL intoClass, const char* className, const char* selectorName, IMP func) {
+    Method trampM = NULL;
+    Class trampC = NULL;
+    SEL trampS = sel_registerName(selectorName);
+    if (intoClass) {
+        trampC = objc_getMetaClass(className);
+    } else {
+        trampC = objc_getClass(className);
+    }
+    method_setImplementation(trampM, func);
+    const char *IMPproto = method_getTypeEncoding(trampM);
+    class_addMethod(trampC, trampS, func, IMPproto);
 }
