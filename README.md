@@ -16,6 +16,8 @@ From this point forward you can design however you like:
 
 Hooks are either written in C or ObjC, although you will most likely use ObjC.
 
+Finally, call your binary prefixed with DYLD_INSERT_LIBRARIES=\<yourInjectableDylib\>
+
 ## Internals
 These are my findings so far about the runtime behavior, so you can also follow along why this exactly works:
 1. Before ANYTHING, the linker of choice (here `dyld`) will look for constructor/ deconstructor sections within the any `.dylib` and process it first during loadup. This is where `LIInitialize` comes into play:
