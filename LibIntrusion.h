@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <objc/runtime.h>
 #include <CoreFoundation/CoreFoundation.h>
-#define LIInitialize __attribute__((constructor)) static void _LIInitialize()
+#define LIInitialize(x) __attribute__((constructor)) static void _LIInitialize_##x()
 
 void LIHookIvar(const char * targetClass, const char *targetIvarName, void *replacement);
 void LIHookMessage(Class targetClass, SEL targetSelector, IMP replacement, IMP* orig);
